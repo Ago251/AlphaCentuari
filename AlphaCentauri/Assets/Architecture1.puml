@@ -1,0 +1,123 @@
+@startuml
+
+hide empty members
+
+rectangle Character {
+    class Character<<S, red>> {
+        +brain : Brain
+        +equipments : Equipment[]    
+        +abilities : Ability[]
+        +traits : Trait[]
+        +hp : int
+    }
+    
+    class Brain<<S, red>>
+    
+    Character - Brain
+}
+
+rectangle RiskSystem {
+    class Outcome<<(S, red)>> {
+        Success,
+        Epic Success,
+        Fail,
+        Epic Fail
+    } 
+    class RiskManager<<M, yellow>> {
+        outcomes : (Outcome, Effect)[]
+        Shuffle() : void
+        Pick() : void
+    }
+    
+    RiskManager - Outcome
+}
+
+rectangle Combat {
+    class Ability<<(S, red)>> {
+        moves : Move
+    } 
+    class Move<<S, red>> {
+        icon : Sprite
+        Apply() : void
+    }
+    note top of Move : derivata da ciascun tipo di mossa
+
+    class CombatSystem<<M, yellow>> {
+        competitors : Character[]
+        turn : Turn
+    }
+
+    class Turn {
+        abilities : (Character, Ability)[]
+        Fight() : void
+    }
+
+    CombatSystem -- Turn
+    Ability o-- Move
+}
+
+rectangle Card {
+
+    class Deck<<M, yellow>> {
+        cards : Card[]
+        Pick() : void
+        Shuffle() : void
+    }
+
+    class CardController<<M, yellow>> {
+        card : Card
+        Flip() : void
+        Drop() : void
+    }
+
+    class Card<<(S, red)>> {
+        sprite : Sprite
+        displayedName : string
+        description : string
+    }
+
+    class Encounter<<(S, red)>> {
+     prize : Card[]
+     nextEncounter : Encounter
+    } 
+    class Equipment<<(S, red)>> {
+        reward : Card[]    
+    }
+    class Trait<<(S, red)>> {
+        effects : Effect[]
+    }
+    class Effect<<(S, red)>> 
+    
+    Card <|-- Encounter
+    Card <|- Character
+    Card <|-- Equipment
+    Card <|--- Outcome
+    Card <|--- Ability
+    Card <|-- Trait
+    Card <|-- Effect
+    
+    CardController - Card
+    Card -o Deck
+}
+
+rectangle Run {
+    class RunManager<<M, yellow>> {
+        map : Map    
+        character : Character
+    }
+
+    class Map<<M, yellow>> {
+        locations : Graph<Location>    
+    }
+    
+    class Location<<M, yellow>> {
+        encounter : Encounter
+    }
+    
+    Map o-- Location
+    RunManager - Map
+}
+
+
+
+@enduml
